@@ -1,0 +1,146 @@
+﻿
+@model  List<MyHomeWork.Models.AccountBookViewModel>
+
+@*GeneratePrettyNames: true  GenerateAbsolutePathLinePragmas: true*@
+@* Generator: MvcHelper *@
+@section head{
+    <style type="text/css">
+        table{
+            text-align:center;
+        }
+        table th{
+            text-align:center;
+        }
+        .highlight{
+            background-color:deepskyblue;
+            color:#ffffff; 
+        }
+        DIV.black {
+            PADDING-RIGHT: 3px;
+            PADDING-LEFT: 3px;
+            FONT-SIZE: 80%;
+            PADDING-BOTTOM: 10px;
+            MARGIN: 3px;
+            COLOR: #a0a0a0;
+            PADDING-TOP: 10px;
+            BACKGROUND-COLOR: #000;
+            TEXT-ALIGN: center;
+        }
+
+            DIV.black SPAN.current {
+                BORDER-RIGHT: #ffffff 1px solid;
+                PADDING-RIGHT: 5px;
+                BORDER-TOP: #ffffff 1px solid;
+                PADDING-LEFT: 5px;
+                FONT-WEIGHT: bold;
+                PADDING-BOTTOM: 2px;
+                BORDER-LEFT: #ffffff 1px solid;
+                COLOR: #ffffff;
+                MARGIN-RIGHT: 3px;
+                PADDING-TOP: 2px;
+                BORDER-BOTTOM: #ffffff 1px solid;
+                BACKGROUND-COLOR: #606060;
+            }
+
+            DIV.black SPAN.disabled {
+                BORDER-RIGHT: #606060 1px solid;
+                PADDING-RIGHT: 5px;
+                BORDER-TOP: #606060 1px solid;
+                PADDING-LEFT: 5px;
+                PADDING-BOTTOM: 2px;
+                BORDER-LEFT: #606060 1px solid;
+                COLOR: #808080;
+                MARGIN-RIGHT: 3px;
+                PADDING-TOP: 2px;
+                BORDER-BOTTOM: #606060 1px solid;
+            }
+
+            DIV.black A {
+                BORDER-RIGHT: #909090 1px solid;
+                PADDING-RIGHT: 5px;
+                BACKGROUND-POSITION: 50% bottom;
+                BORDER-TOP: #909090 1px solid;
+                PADDING-LEFT: 5px;
+                BACKGROUND-IMAGE: url(bar.gif);
+                PADDING-BOTTOM: 2px;
+                BORDER-LEFT: #909090 1px solid;
+                MARGIN-RIGHT: 3px;
+                PADDING-TOP: 2px;
+                BORDER-BOTTOM: #909090 1px solid;
+                TEXT-DECORATION: none;
+            }
+
+                DIV.black A:hover {
+                    BORDER-RIGHT: #f0f0f0 1px solid;
+                    BORDER-TOP: #f0f0f0 1px solid;
+                    BACKGROUND-IMAGE: url(invbar.gif);
+                    BORDER-LEFT: #f0f0f0 1px solid;
+                    COLOR: #ffffff;
+                    BORDER-BOTTOM: #f0f0f0 1px solid;
+                    BACKGROUND-COLOR: #404040;
+                }
+    </style>
+    <link href="~/Content/pagination.css" rel="stylesheet" />
+    
+    <script type="text/javascript">
+        function doPost() {
+            window.location.href = "@Url.Action("MyForm")";
+        }
+        function doDel(id) {
+
+            window.location.href = "@Url.Action("Del")/" + id;
+        }
+        function doEdit(id) {
+            window.location.href = "@Url.Action("EditGet")/" + id;
+
+        }
+        function doDelList() {
+            var i = 0, id = '';
+
+            $("input[id='cbDel']").each(function () {
+                i++;
+                if ($(this).prop('checked'))
+                    id += i + ',';
+            });
+            window.location.href = "@Url.Action("DelList")/" + id;;
+        }
+    </script>
+}
+@{
+    Layout = "~/Views/Shared/_myLayout.cshtml";
+    ViewBag.Title = "我的記帳本";
+}
+
+<div class="container">
+
+    <h3 class="text-center">我的記帳本</h3>
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr>
+                <th>
+                    @Html.ActionLink("新增", "Add", new { id = Model[0].PageIndex }, new { @class = "btn btn-default" })
+                </th>
+                <th>@Html.DisplayNameFor(s => Model[0].Id)</th>
+                <th>@Html.DisplayNameFor(s => Model[0].Categoryyy)</th>
+                <th>@Html.DisplayNameFor(s => Model[0].Amounttt)</th>
+                <th>@Html.DisplayNameFor(s => Model[0].Remarkkk)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a class="btn btn-info" href="@Url.Action("Edit",new { id= @item.Id + "_" + @Request.Url.AbsoluteUri.ToString().Split('/')[Request.Url.AbsoluteUri.ToString().Split('/').Length -1]})">編輯</a>
+                        <a class="btn btn-warning" href="@Url.Action("Del",new { id= @item.Id + "_" + @Request.Url.AbsoluteUri.ToString().Split('/')[Request.Url.AbsoluteUri.ToString().Split('/').Length -1]})">刪除</a>
+                    </td>
+                    <td>@item.Id</td>
+                    <td>@item.Categoryyy</td>
+                    <td>@item.Amounttt</td>
+                    <td><pre>@item.Remarkkk</pre></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.Action("PageList")
+</div>
