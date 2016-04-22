@@ -10,7 +10,7 @@
     using System.Text;
 
     public class HomeController : MyController
-    {
+    { 
         #region 1.0 帳本列表 + ActionResult Index(string id)
         /// <summary>
         /// 1.0 帳本列表
