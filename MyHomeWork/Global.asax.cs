@@ -8,9 +8,9 @@
         protected void Application_Start()
         {
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
             //AreaRegistration.RegisterAllAreas();
             //FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            //BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
 }

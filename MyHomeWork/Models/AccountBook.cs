@@ -18,7 +18,6 @@ namespace MyHomeWork.Models
         public DateTime Dateee { get; set; }
 
         [Required]
-        [StringLength(500)]
         public string Remarkkk { get; set; }
     }
 }

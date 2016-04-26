@@ -1,16 +1,13 @@
-﻿
-@model  List<MyHomeWork.Models.AccountBookViewModel>
-
-@*GeneratePrettyNames: true  GenerateAbsolutePathLinePragmas: true*@
-@* Generator: MvcHelper *@
+﻿@model  List<MyHomeWork.Models.AccountBookViewModel>
+@{
+    Layout = "~/Views/Shared/_myLayout.cshtml";
+    ViewBag.Title = "我的記帳本";
+}
 @section head{
     <style type="text/css">
-        table{
+        table,table th{
             text-align:center;
-        }
-        table th{
-            text-align:center;
-        }
+        }       
         .highlight{
             background-color:deepskyblue;
             color:#ffffff; 
@@ -79,40 +76,10 @@
                     BORDER-BOTTOM: #f0f0f0 1px solid;
                     BACKGROUND-COLOR: #404040;
                 }
+
     </style>
-    <link href="~/Content/pagination.css" rel="stylesheet" />
-    
-    <script type="text/javascript">
-        function doPost() {
-            window.location.href = "@Url.Action("MyForm")";
-        }
-        function doDel(id) {
-
-            window.location.href = "@Url.Action("Del")/" + id;
-        }
-        function doEdit(id) {
-            window.location.href = "@Url.Action("EditGet")/" + id;
-
-        }
-        function doDelList() {
-            var i = 0, id = '';
-
-            $("input[id='cbDel']").each(function () {
-                i++;
-                if ($(this).prop('checked'))
-                    id += i + ',';
-            });
-            window.location.href = "@Url.Action("DelList")/" + id;;
-        }
-    </script>
 }
-@{
-    Layout = "~/Views/Shared/_myLayout.cshtml";
-    ViewBag.Title = "我的記帳本";
-}
-
 <div class="container">
-
     <h3 class="text-center">我的記帳本</h3>
     <table class="table table-bordered table-responsive">
         <thead>
@@ -131,16 +98,46 @@
             {
                 <tr>
                     <td>
-                        <a class="btn btn-info" href="@Url.Action("Edit",new { id= @item.Id + "_" + @Request.Url.AbsoluteUri.ToString().Split('/')[Request.Url.AbsoluteUri.ToString().Split('/').Length -1]})">編輯</a>
-                        <a class="btn btn-warning" href="@Url.Action("Del",new { id= @item.Id + "_" + @Request.Url.AbsoluteUri.ToString().Split('/')[Request.Url.AbsoluteUri.ToString().Split('/').Length -1]})">刪除</a>
+                        <a class="btn btn-info" href="@Url.Action("Edit", new { id = item.Id ,pageIndex = item.PageIndex })">編輯</a>
+                        @Ajax.ActionLink("刪除", "Del", "Home",
+                        new
+                        {
+                            id = item.Id,pageIndex = Model[0].PageIndex
+                        },
+                       new AjaxOptions() {
+                           HttpMethod = "Delete",
+                           Confirm = "確定要刪除嗎?",
+                           OnSuccess = "editClass.Success",
+                           UpdateTargetId = "main" },new { @class = "btn btn-danger"})
                     </td>
                     <td>@item.Id</td>
-                    <td>@item.Categoryyy</td>
+                    <td>@{var str = item.Categoryyy == 1 ? "支出" : "收入";
+                        switch (str)
+                        {
+                            case "支出":
+                                @Html.Raw("<span class='text-danger field-validation-error'>"+str+"</span>")
+                                break;
+                            case "收入":
+                                @Html.Raw("<span>" + str + "</span>")
+                                break;
+                        }
+                    }
+                    </td>
                     <td>@item.Amounttt</td>
                     <td><pre>@item.Remarkkk</pre></td>
                 </tr>
             }
         </tbody>
     </table>
-    @Html.Action("PageList")
+    <div id="myform">
+        <span class="text-danger field-validation-error" id="errorMessages"></span>
+    </div>
+    @Html.Action("PageList", "Home", new { pageIndex = Model[0].PageIndex})
 </div>
+@Scripts.Render("~/bundles/jqueryvalAjax")
+<script src="~/Scripts/FormValid.js"></script>
+@section script{
+    <script type="text/javascript">
+        var editClass = new EditClass("@Url.Action("Index", "Home", new { id = Model[0].PageIndex })");
+    </script>
+}
