@@ -58,7 +58,7 @@
         public ActionResult Del(string id,int pageIndex)
         {
             if (string.IsNullOrEmpty(id)) return Json(new {
-                uccess = false,
+                success = false,
                 errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
                                 .Select(m => m.ErrorMessage).ToArray()}); 
             try
