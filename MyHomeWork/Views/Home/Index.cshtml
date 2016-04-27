@@ -85,7 +85,7 @@
         <thead>
             <tr>
                 <th>
-                    @Html.ActionLink("新增", "Add", new { id = Model[0].PageIndex }, new { @class = "btn btn-default" })
+                    @Html.ActionLink("新增", "Add", new { pageIndex = Model[0].PageIndex }, new { @class = "btn btn-default" })
                 </th>
                 <th>@Html.DisplayNameFor(s => Model[0].Id)</th>
                 <th>@Html.DisplayNameFor(s => Model[0].Categoryyy)</th>
@@ -102,7 +102,7 @@
                         @Ajax.ActionLink("刪除", "Del", "Home",
                         new
                         {
-                            id = item.Id,pageIndex = Model[0].PageIndex
+                            id = item.Id,pageIndex = item.PageIndex
                         },
                        new AjaxOptions() {
                            HttpMethod = "Delete",
@@ -135,9 +135,4 @@
     @Html.Action("PageList", "Home", new { pageIndex = Model[0].PageIndex})
 </div>
 @Scripts.Render("~/bundles/jqueryvalAjax")
-<script src="~/Scripts/FormValid.js"></script>
-@section script{
-    <script type="text/javascript">
-        var editClass = new EditClass("@Url.Action("Index", "Home", new { id = Model[0].PageIndex })");
-    </script>
-}
+@Scripts.Render("~/bundles/formValid")

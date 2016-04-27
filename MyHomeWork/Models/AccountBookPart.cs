@@ -14,7 +14,7 @@ namespace MyHomeWork.Models
                 Id = this.Id.ToString(),
                 Amounttt = this.Amounttt, 
                 Categoryyy = this.Categoryyy,
-                Dateee = this.Dateee,
+                Dateee = this.Dateee.Date,
                 Remarkkk = this.Remarkkk,
                 PageIndex = pageIndex
             };

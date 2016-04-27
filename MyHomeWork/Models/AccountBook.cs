@@ -1,12 +1,11 @@
 namespace MyHomeWork.Models
 {
-    using System;
-    using System.Collections.Generic;
+    using System;  
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
+  
 
-    [Table("AccountBook")]
+    [Table("AccountBook")]///指定連結資料庫的資料表名稱
     public partial class AccountBook
     { 
         public Guid Id { get; set; }

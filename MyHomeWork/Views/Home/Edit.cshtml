@@ -25,9 +25,9 @@
             <div class="form-group">
                 <label class="control-label col-md-2">@Html.DisplayNameFor(model => model.Categoryyy) </label>
                 <div class="col-md-10">
-                    @Html.Raw("支出")
+                    @Html.Label("支出")
                     @Html.RadioButtonFor(model => model.Categoryyy, 1)
-                    @Html.Raw("收入")
+                    @Html.Label("收入")
                     @Html.RadioButtonFor(model => model.Categoryyy, 0)
                     @Html.ValidationMessageFor(model => model.Categoryyy, "", new { @class = "text-danger" })
                 </div>
@@ -44,9 +44,9 @@
 
             <!-- 日期 -->
             <div class="form-group">
-                    <label class="control-label col-md-2">@Html.DisplayNameFor(model => model.Dateee) </label>
+                <label class="control-label col-md-2">@Html.DisplayNameFor(model => model.Dateee) </label>
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Dateee, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(model => model.Dateee.Value.Date, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.Dateee, "", new { @class = "text-danger" })
                 </div>
             </div>            
@@ -73,9 +73,4 @@
     </div>
 </div>
 @Scripts.Render("~/bundles/jqueryvalAjax")
-<script src="~/Scripts/FormValid.js"></script>
-@section script{
-    <script type="text/javascript">
-        var editClass = new EditClass("@Url.Action("Index", "Home", new { id = Model.PageIndex })");
-    </script>
-}
+@Scripts.Render("~/bundles/formValid")

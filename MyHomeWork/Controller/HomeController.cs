@@ -1,13 +1,10 @@
 ﻿namespace MyHomeWork.Controllers
 {
+    using Models;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Web.Mvc;
-    using Models;
-    using System.Data.Entity;
     using System.Data.Entity.Validation;
-    using System.Text;
 
     public class HomeController : MyController
     { 
@@ -30,15 +27,13 @@
         /// <returns>分頁Bar</returns>
         [HttpGet]
         [ChildActionOnly]
-        public ActionResult PageList(int pageIndex)
-        {
-            var pageSize = Request.Params["pageSize"] == null ? 10 : Convert.ToInt32(Request.Params["pageSize"]);      
+        public ActionResult PageList(int pageIndex,int pageSize = 10)
+        {  
             var totalCount = this.GetListCount() / pageSize;
             var prevIndex = pageIndex == 1 ? 1 : pageIndex - 1;
             var nextIndex = pageIndex == totalCount ? totalCount : pageIndex + 1;
-            var pageList = this.GetList(pageIndex, pageSize);
             return PartialView(new PageModel() {
-                Models = pageList,
+                Models = this.GetList(pageIndex, pageSize),
                 PageBarSize = 5,
                 PrevIndex = prevIndex,
                 NextIndex = nextIndex,
@@ -57,22 +52,19 @@
         [HttpDelete]
         public ActionResult Del(string id,int pageIndex)
         {
-            if (string.IsNullOrEmpty(id)) return Json(new {
+            Guid rGuid;
+            if (!Guid.TryParse(id,out rGuid)) return Json(new {
                 success = false,
-                errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                                .Select(m => m.ErrorMessage).ToArray()}); 
+                errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray()}); 
             try
             {
-                Instance.AccountBooks.RemoveRange(listBooks.Where(s => s.Id == Guid.Parse(id)));
+                Instance.AccountBooks.RemoveRange(listBooks.Where(s => s.Id == rGuid));
                 Instance.SaveChanges();
-                return Json(new { success = true });
+                return Json(new { success = true, pageIndex = pageIndex });
             }
             catch (DbEntityValidationException ex)
             {
-                //錯誤僅For 內部看
-                var entityError = ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage);
-                var getFullMessage = string.Join("; ", entityError);
-                var exceptionMessage = string.Concat(ex.Message, "errors are: ", getFullMessage);
+                Helpers.GetDbError(ex);
                 return Json(new { success = false });
             }
         }
@@ -86,16 +78,9 @@
         [HttpGet]
         public ActionResult Edit(string id,int pageIndex)
         {
-            if (string.IsNullOrEmpty(id)) return Content("<script>alert('Id Error');</script>");
-            var rGuid = Guid.Parse(id);
-            var editModel = listBooks.Where(s => s.Id == rGuid).Select(s => new Models.AccountBookViewModel() {
-                Id = s.Id.ToString(),
-                Amounttt = s.Amounttt,
-                Categoryyy = s.Categoryyy,
-                Dateee = s.Dateee,
-                Remarkkk = s.Remarkkk,
-                PageIndex = pageIndex
-            }).FirstOrDefault();
+            Guid rGuid;
+            if (!Guid.TryParse(id,out rGuid)) return Content("<script>alert('Id Error');</script>");
+            var editModel = listBooks.Where(s => s.Id == rGuid).Select(s => s.ToViewModel(pageIndex)).FirstOrDefault();
             return View(editModel);
         }
         #endregion
@@ -111,38 +96,26 @@
         {
             if (!ModelState.IsValid)
             {
-               return Json(new
-                {
-                    success = false,
-                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors)
-                               .Select(m => m.ErrorMessage).ToArray()
-                });
-            }
-            if(string.IsNullOrEmpty(model.Id))
-            {
                 return Json(new
                 {
                     success = false,
-                    errors = "Id不可為空"
+                    errors = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray()
                 });
             }
-            var rid = Guid.Parse(model.Id.Split('_')[0]);
+            var rGuid = Guid.Parse(model.Id);
             try
             {
-                var eModel = listBooks.FirstOrDefault(s => s.Id == rid);
+                var eModel = listBooks.FirstOrDefault(s => s.Id == rGuid);
                 eModel.Categoryyy = (int)model.Categoryyy;
                 eModel.Amounttt = (int)model.Amounttt;
                 eModel.Dateee = (DateTime)model.Dateee;
                 eModel.Remarkkk = model.Remarkkk;
                 Instance.SaveChanges();
-                return Json(new { success = true });
+                return Json(new { success = true, pageIndex = model.PageIndex });
             }
             catch (DbEntityValidationException ex)
             {
-                //錯誤僅For 內部看
-                var entityError = ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage);
-                var getFullMessage = string.Join("; ", entityError);
-                var exceptionMessage = string.Concat(ex.Message, "errors are: ", getFullMessage);
+                Helpers.GetDbError(ex);
                 return Json(new { success = false });
             }
         }
@@ -154,10 +127,8 @@
         /// <param name="id">pageIndex</param>
         /// <returns>View(AccountBookViewModel)</returns>
         [HttpGet]
-        public ActionResult Add(string id)
+        public ActionResult Add(int pageIndex)
         {
-            var pageIndex = Helpers.CheckIdIsInt(id);
-            if (pageIndex == 0 || pageIndex == -1) pageIndex = 1;
             return View(new AccountBookViewModel() { PageIndex = pageIndex });
         }
         #endregion
@@ -185,14 +156,11 @@
                 var addModel = new AccountBook() { Amounttt = (int)model.Amounttt, Categoryyy = (int)model.Categoryyy, Dateee = (DateTime)model.Dateee, Remarkkk = model.Remarkkk, Id = Guid.NewGuid() };
                 Instance.AccountBooks.Add(addModel);
                 Instance.SaveChanges();
-                return Json(new { success = true });
+                return Json(new { success = true,pageIndex = model.PageIndex });
             }
             catch (DbEntityValidationException ex)
             {
-                //錯誤僅For 內部看
-                var entityError = ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage);
-                var getFullMessage = string.Join("; ", entityError);
-                var exceptionMessage = string.Concat(ex.Message, "errors are: ", getFullMessage);
+                Helpers.GetDbError(ex);
                 return Json(new { success = false });
             }
         }

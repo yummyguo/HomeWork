@@ -11,8 +11,16 @@
             new Lazy<SkillTree>(() => new SkillTree()); 
 
         public static SkillTree Instance { get { return lazy.Value; } }
-
-        protected readonly List<AccountBook> listBooks = Instance.AccountBooks.Where(s => true).ToList();
+        protected readonly List<AccountBook> listBooks;
+        public MyController()
+        { 
+            if(System.Web.HttpContext.Current.Items["listBooks"] == null)
+            {
+                listBooks = Instance.AccountBooks.Where(s => true).ToList();
+                System.Web.HttpContext.Current.Items.Add("listBooks", listBooks);
+            }
+            listBooks = System.Web.HttpContext.Current.Items["listBooks"] as List<AccountBook>;
+        }
         #region 1.0 獲取頁面資訊 - List<AccountBook> GetList(int pageIndex, int pageSize)
         /// <summary>
         /// 1.0 獲取頁面資訊
@@ -22,7 +30,8 @@
         /// <returns>List<AccountBook></returns>
         protected List<AccountBookViewModel> GetList(int pageIndex, int pageSize)
         {
-            return listBooks.Select(s => s.ToViewModel(pageIndex))
+           // var list= listBooks.Select(s => s.ToViewModel(pageIndex)).ToList(); ///塞PageIndex值
+           return listBooks.Select(s => s.ToViewModel(pageIndex))
                 .OrderByDescending(s => s.Dateee)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize).ToList();

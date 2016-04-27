@@ -93,35 +93,6 @@
             string rtnValue = "<input type='button' id='" + id + "' name='" + id + "' value='" + value + "' class='" + className + "' " + eventArg + "='" + eventContent + "' />";
             return new MvcHtmlString(rtnValue);
         }
-
-        public static MvcHtmlString PageBar(this HtmlHelper htmlHelper, string id,string size)
-        {
-            DbContext dbContext = new Models.SkillTree();
-            var list = dbContext.Set<Models.AccountBook>().Where(s => true).ToList();
-            var pageIdex = id.CheckIdIsInt();
-            if (pageIdex <= 0) return new MvcHtmlString("頁碼錯誤");
-            var pageSize = size.CheckIdIsInt();
-            if(pageSize<=0) return new MvcHtmlString("每頁筆數錯誤");
-
-            var totalPageCount = list.Count() / pageSize; //還沒用到
-            var pageList = list.Skip((pageIdex - 1) * pageSize).Take(pageSize).ToList();
-            int startPage = (pageIdex / 10 + 1) * 10 + 1;
-            StringBuilder sb = new StringBuilder(1000);
-            sb.Append("<div class='black'>");
-            sb.Append("<span class='disabled'>上一頁</span>"); //未判斷
-            sb.Append("<span class='current'>" + startPage + "</span>");
-
-            for (int i = startPage; i <= startPage + 10; i++)
-            {
-                sb.Append("<a href ='/Home/Index/" + i + "'> " + i + " </a>"); 
-            }
-            sb.Append("<a href ='/Home/Index/'" + (pageIdex + 1) + "> 下一頁</a>");
-            sb.Append("</div>");  //判斷頁尾
-       
-            
-
-           return new MvcHtmlString(sb.ToString());
-        }
         #endregion
     }
 }

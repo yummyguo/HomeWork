@@ -31,8 +31,8 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Dateee.HasValue && !Dateee.DateDiff(Convert.ToDateTime(Dateee)))
-                yield return new ValidationResult("日期不得大於今天", new[] { "Dateee" });
+            if (Dateee.HasValue && Dateee.DateDiff(Convert.ToDateTime(Dateee)))
+               yield return new ValidationResult("日期不得大於今天", new[] { "Dateee" });
         }
     }
 }

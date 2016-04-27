@@ -10,12 +10,14 @@ namespace MyHomeWork
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-2.2.3.min.js"));
-             
+
+            bundles.Add(new ScriptBundle("~/bundles/formValid").Include(
+                        "~/Scripts/FormValid.js"));
             bundles.Add(new ScriptBundle("~/bundles/jqueryvalAjax")
                 .Include("~/Scripts/jquery-2.2.3.min.js")
-                .Include("~/Scripts/jquery.validate.min.js")
-                .Include("~/Scripts/jquery.validate.unobtrusive.min.js")
-                .Include("~/Scripts/jquery.unobtrusive-ajax.min.js")
+                .Include("~/Scripts/jquery.validate.js")
+                .Include("~/Scripts/jquery.validate.unobtrusive.js")
+                .Include("~/Scripts/jquery.unobtrusive-ajax.js")
                 );
 
             // 使用開發版本的 Modernizr 進行開發並學習。然後，當您
